@@ -7,8 +7,10 @@ import java.util.List;
 
 public class TestClass {
     public static void main(String[] args) {
-        ExcelReader excelReader = new ExcelReader();
-        List<Customer> list = excelReader.readExcel("/Users/filipsulich/Desktop/Test123.xlsx");
+        String filePath = "/Users/filipsulich/Desktop/Test123.xlsx";
+        ExcelReader excelReader = ExcelReader.getInstance(filePath);
+
+        List<Customer> list = excelReader.readExcel();
         excelReader.printCustomers(list);
     }
 

@@ -13,8 +13,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExcelReader {
+    private String filePath;
+    private static ExcelReader instance;
 
-    public List<Customer> readExcel(String filePath) {
+    private ExcelReader(String filePath) {
+        this.filePath = filePath;
+    }
+
+    /***
+     * Singleton pattern
+     * @param filePath path to the file
+     * @return instance of ExcelReader
+     */
+    public static ExcelReader getInstance(String filePath) {
+        if (instance == null) {
+            instance = new ExcelReader(filePath);
+        }
+        return instance;
+    }
+
+
+    public List<Customer> readExcel() {
         try (FileInputStream fis = new FileInputStream(filePath); Workbook workbook = new XSSFWorkbook(fis)) {
             Sheet sheet = workbook.getSheetAt(0);
             return customerList(sheet);
@@ -24,7 +43,7 @@ public class ExcelReader {
         return null;
     }
 
-    public List<Customer> customerList(Sheet sheet) {
+    private List<Customer> customerList(Sheet sheet) {
         List<Customer> list = new ArrayList<>();
         for (Row row : sheet) {
             if(row.getRowNum() != 0) {
