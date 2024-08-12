@@ -9,12 +9,13 @@ import org.example.generatordemo.Customer.Customer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 public class ExcelReader {
     private String filePath;
     private static ExcelReader instance;
+
 
     private ExcelReader(String filePath) {
         this.filePath = filePath;
@@ -32,32 +33,13 @@ public class ExcelReader {
         return instance;
     }
 
-
-    public List<Customer> readExcel() {
+    public Workbook readExcel() {
         try (FileInputStream fis = new FileInputStream(filePath); Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet sheet = workbook.getSheetAt(0);
-            return customerList(sheet);
+            return workbook;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private List<Customer> customerList(Sheet sheet) {
-        List<Customer> list = new ArrayList<>();
-        for (Row row : sheet) {
-            if(row.getRowNum() != 0) {
-                String name = getCellValueAsString(row.getCell(0));
-                String surname = getCellValueAsString(row.getCell(1));
-                int age = (int) getCellValueAsNumeric(row.getCell(2));
-                int nip = (int) getCellValueAsNumeric(row.getCell(3));
-                double value = getCellValueAsNumeric(row.getCell(4));
-                Customer customer = new Customer(name, surname, age, nip, value);
-                list.add(customer);
-            }
-
-        }
-        return list;
     }
 
     private String getCellValueAsString(Cell cell) {
@@ -92,9 +74,28 @@ public class ExcelReader {
         }
     }
 
+    public List<Customer> generateCustomerList(Sheet sheet) {
+        List<Customer> list = new ArrayList<>();
+        for (Row row : sheet) {
+            if(row.getRowNum() != 0) {
+                //TODO: Check if row is empty -> if so, skip the row
+                String name = getCellValueAsString(row.getCell(0));
+                String surname = getCellValueAsString(row.getCell(1));
+                int age = (int) getCellValueAsNumeric(row.getCell(2));
+                int nip = (int) getCellValueAsNumeric(row.getCell(3));
+                double value = getCellValueAsNumeric(row.getCell(4));
+                Customer customer = new Customer(name, surname, age, nip, value);
+                list.add(customer);
+            }
+        }
+        return list;
+    }
+
     public void printCustomers(List<Customer> customers) {
         for (Customer customer : customers) {
-            System.out.println(customer.getName() + " " + customer.getSurname() + " " + customer.getAge() + " " + customer.getNIP() + " " + customer.getValue());
+            System.out.println("Name: " + customer.getName() + ", surname: " + customer.getSurname() + ", age: " + customer.getAge() + ", NIP: " + customer.getNIP() + ", value: " + customer.getValue());
+            System.out.println();
         }
     }
+
 }
